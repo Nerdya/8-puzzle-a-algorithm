@@ -155,6 +155,47 @@ def reconstruct_path(current, came_from):
         temp = temp.came_from
     return SUCCESS
 
+def get_move(current, next):
+    """
+    Lấy hướng di chuyển từ trạng thái hiện tại đến trạng thái tiếp theo.
+
+    Parameters:
+    - current (State): Trạng thái hiện tại.
+    - next (State): Trạng thái tiếp theo.
+
+    Returns:
+    - (str): Hướng di chuyển.
+    """
+    if current is None or next is None:
+        return ""
+    curr_i, curr_j = find_zero_position(current)
+    next_i, next_j = find_zero_position(next)
+    if curr_i > next_i:
+        return "UP"
+    elif curr_i < next_i:
+        return "DOWN"
+    elif curr_j > next_j:
+        return "LEFT"
+    elif curr_j < next_j:
+        return "RIGHT"
+    return ""
+
+def find_zero_position(state):
+    """
+    Tìm vị trí của ô trống trong trạng thái.
+
+    Parameters:
+    - state (State): Trạng thái.
+
+    Returns:
+    - (tuple): Vị trí của ô trống (i, j).
+    """
+    for i in range(n):
+        for j in range(n):
+            if state.board[i][j] == 0:
+                return i, j
+    return -1, -1
+
 def astar(start, goal):
     """
     Thuật toán A* để tìm đường đi từ trạng thái start đến trạng thái goal.
@@ -189,12 +230,16 @@ if __name__ == "__main__":
         [8, 0, 4],
         [7, 6, 5]
     ]
-    with open("in.txt", "r") as file:
+    with open("inp.txt", "r") as input_file:
         for i in range(n):
-            start.board[i] = list(map(int, file.readline().split()))
+            start.board[i] = list(map(int, input_file.readline().split()))
     if astar(start, goal) == SUCCESS:
-        for state in reversed(output):
-            state.print_state()
+        with open("out.txt", "w") as output_file:
+            output_file.write(str(len(output) - 1) + "\n")
+            moves = []
+            for i in range(len(output) - 1):
+                moves.append(get_move(output[i+1], output[i]))
+            output_file.write(" ".join(moves))
         print("SUCCESS")
     else:
         print("FAIL")
