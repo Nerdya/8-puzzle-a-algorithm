@@ -234,12 +234,15 @@ if __name__ == "__main__":
         for i in range(n):
             start.board[i] = list(map(int, input_file.readline().split()))
     if astar(start, goal) == SUCCESS:
+        for state in reversed(output):
+            state.print_state()
         with open("out.txt", "w") as output_file:
             output_file.write(str(len(output) - 1) + "\n")
             moves = []
             for i in range(len(output) - 1):
                 moves.append(get_move(output[i+1], output[i]))
             output_file.write(" ".join(moves))
+        
         print("SUCCESS")
     else:
         print("FAIL")
